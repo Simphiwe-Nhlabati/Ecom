@@ -16,6 +16,10 @@ from article.views import journalist_pem, editor_pem
 
 # Create your views here.
 class Newsletter_View(LoginRequiredMixin, ListView):
+    """
+    Displays a list of published articles.
+    Requires user to be logged in.
+    """
     model = Newsletter
     template_name = 'newsletter/newsletter_list.html'
     context_object_name = 'newsletters'

@@ -5,6 +5,10 @@ from accounts.models import CustomUser
 
 # Create your models here.
 class Newsletter(models.Model):
+    """
+    Represents a news newsletter submitted by a journalist.
+    Includes title, content, description, image, publication date, and related users.
+    """
     title = models.CharField(max_length=200)
     content = models.TextField()
     description = models.CharField(max_length=500)

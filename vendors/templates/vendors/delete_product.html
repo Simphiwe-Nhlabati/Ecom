@@ -1,0 +1,21 @@
+{% extends 'base_vendor.html' %}
+
+{% block title %}Confirm product termination{% endblock %}
+
+{% block content %}
+    <h2>Confirm Product Deletion</h2>
+
+    <p>This type of product will be deleted "<strong>{{ product.name }}</strong>"?</p>
+    <p>This action cannot be undone.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="button-delete">Delete</button>
+        
+        {% if store.id %}
+            <a href="{% url 'vendors:view_product' store.id %}">No cancel</a>
+        {% else %}
+            <a href="{% url 'vendors:home_vendor' %}"> Return back to dashboard</a>
+        {% endif %}
+    </form>
+{% endblock %}

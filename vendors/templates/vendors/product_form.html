@@ -1,0 +1,26 @@
+{% extends 'base_vendor.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Product{% else %}Add New Product{% endif %}
+{% endblock %}
+
+{% block content %}
+    <h2>{% if form.instance.pk %}Edit Product: {{ form.instance.name }}{% else %}Add New Product{% endif %}</h2>
+
+    {% if error_message %}
+        <p class="error">{{ error_message }}</p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }} 
+        <button type="submit">
+            {% if form.instance.pk %}Save Changes{% else %}Add Product{% endif %}
+        </button>
+            {% if store.id %}
+                <a href="{% url 'vendors:view_product' store.id %}">View Product</a>
+            {% else %}
+                <span>Generate product</span>
+            {% endif %}
+    </form>
+{% endblock %}

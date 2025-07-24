@@ -1,0 +1,26 @@
+{% extends 'base_vendor.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Store{% else %}Create New Store{% endif %}
+{% endblock %}
+
+{% block content %}
+    <h2>{% if form.instance.pk %}Edit Store: {{ form.instance.name }}{% else %}Create New Store{% endif %}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        {{ form.as_p }} 
+
+        <button type="submit">
+            {% if form.instance.pk %}Save Changes
+            {% else %}Create Store
+            {% endif %}
+        </button>
+        <button><a href="{% url 'vendors:store_view' %}">Cancel</a></button>
+    </form>
+</br>
+    <p>
+        <button><a href="{% url 'vendors:home_vendor' %}">Return back to dashboard</a></button>
+    </p>
+{% endblock %}

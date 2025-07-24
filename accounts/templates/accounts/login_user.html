@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login user{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg p-4">
+                <h2 class="card-title text-center mb-4">Login to Your Account</h2>
+
+                {% if form.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        Please login to your account by filling the form below.
+                    </div>
+                {% endif %}
+                
+                <form method="post" action="{% url 'login_user' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username:</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+
+                </br>
+                    <button type="submit" class="btn btn-primary btn-lg w-100">Login</button>
+
+                    
+
+                    <p class="text-center mt-3">
+                        No account? <a href="{% url 'register_user' %}">Register here</a>
+                    </p>
+                    
+                    <p class="text-center">
+                        <a href="{% url 'reset_password' %}">Forgotten your password?</a>
+                    </p>
+                </form> 
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+                    

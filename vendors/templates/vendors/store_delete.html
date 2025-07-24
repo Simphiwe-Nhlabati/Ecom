@@ -1,0 +1,15 @@
+{% extends 'base_vendor.html' %}
+
+{% block title %}Store termination{% endblock %}
+
+{% block content %}
+    <h2>Store delete</h2>
+
+    <p>This type of store will be deleted</p>
+
+    <form method="post" >
+        {% csrf_token %}
+        <button type="submit" class="button-delete">Delete</button>
+        <a href="{% url 'vendors:store_view' %}"> Cancel deletion</a>
+    </form>
+{% endblock %}

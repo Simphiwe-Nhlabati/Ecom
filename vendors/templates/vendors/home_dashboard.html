@@ -1,0 +1,85 @@
+{% extends 'base_vendor.html' %}
+{% load static %}
+
+{% block title %}Vendor Dashboard{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h1 class="mb-4">Welcome Vendor </h1>
+
+    {% if messages %}
+        <div class="messages mb-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5>Your Products </h5>
+                </div>
+                <div class="card-body">
+                    {% if dash_list.products %}
+                        <ul class="list-group mb-3">
+                            {% for product in dash_list.products %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ product.name }}  
+                                    R{{ product.price }} 
+                                    Stock: {{ product.stock }}
+                                    <span>
+                                        <a href="{% url 'vendors:modify_product' pk=product.pk %}" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                                        <a href="{% url 'vendors:delete_product' pk=product.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        {% if store.id %}
+                            <a href="{% url 'view_product' store.id %}">View Product</a>
+                        {% else %}
+                            <a href="{% url 'vendors:generate_product_api' %}">Generate API Product</a>
+                        {% endif %}
+                    {% else %}
+                        <p class="card-text">You haven't added any products yet.</p>
+                    {% endif %}
+                    <a href="{% url 'vendors:store_generate_api' %}" class="btn btn-sm btn-success mt-2">Add New API Product</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5>Recent Sales & Orders</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_sales %}
+                        <ul class="list-group list-group-flush">
+                            {% for sale in recent_sales %}
+                                <li class="list-group-item">
+                                    Sale: {{ sale.product.name }} - Quantity: {{ sale.quantity }} - Total: R{{ sale.total_price }}
+
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="card-text">No recent sales.</p>
+                    {% endif %}
+                    <a href="{% url 'vendors:sales_report' %}" class="btn btn-sm btn-warning mt-2">View All Sales</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <h3>Checkout your stores</h3>
+        <a href="{% url 'vendors:store_generate_api' %}" class="btn btn-lg btn-primary mx-2">View your API store</a>
+        {% comment %} <a href="{% url 'eCommerce:view_products' %}" class="btn btn-lg btn-success mx-2">Manage Products</a> {% endcomment %}
+    </div>
+</div>
+{% endblock %}

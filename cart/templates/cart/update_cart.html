@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Update Cart{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3>Update {{ item.product.name }} Quantity</h3>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-info">Update</button>
+  </form>
+</div>
+{% endblock %}

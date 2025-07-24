@@ -1,0 +1,23 @@
+{% extends 'base_vendor.html' %}
+
+{% block title %}Display products{% endblock %}
+
+{% block content %}
+    <h2>Here are all your products</h2>
+    {% if dash_list.products %}
+        <ul class="product-list">
+            {% for product in dash_list.products %}
+                <li>
+                    <span>{{ product.name }} (R{{ product.price|floatformat:2 }})</span>
+                    <div class="actions">
+                        <a href="{% url 'vendors:modify_product' pk=product.pk %}">Modify product</a>
+                        <a href="{% url 'vendors:delete_product' pk=product.pk %}" style="color: red;">Delete product</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No products found yet.</p>
+        <p><a href="{% url 'vendors:generate_product' %}">Add a product to your store</a></p>
+    {% endif %}
+{% endblock %}

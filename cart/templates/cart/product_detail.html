@@ -1,0 +1,47 @@
+{% extends 'base_cart.html' %}
+{% load static %}
+
+{% block title %}Product information{% endblock %}
+
+{% block content %}
+<h1>Product information</h1>
+    <div class="product-detail">
+        <h1>{{ product.name }}</h1>
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top img-fluid" alt="{{ product.description }}">
+        {% else %}
+            <img src="{% static 'bread_store/bakery-simple-element_24908-54307.avif' %}" class="card-img-top img-fluid" alt="No image available">
+        {% endif %}
+        <p><strong>Description:</strong> {{ product.description }}</p>
+        <p><strong>Price:</strong> R {{ product.price }}</p>
+        <p><strong>Available Stock:</strong> {{ product.stock }}</p>
+
+        <hr>
+        <h2>Reviews</h2>
+        {% if reviews %}
+        <ul>
+            {% for review in reviews %}
+            <li>
+                <strong>{{ review.user.username }}</strong> ({{ review.created_at }})
+                {% if review.is_verified %} Verified Purchase{% endif %}
+                <p>{{ review.text }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No reviews yet.</p>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+        <a href="{% url 'add_item_to_cart' product_id=product.id %}" class="btn btn-success btn-lg">Add item to cart</a>
+
+        <a href="{% url 'make_review' product_id=product.id %}" class="btn btn-primary btn-lg">Write a Review</a>
+        <a href="{% url 'display_reviews_api' %}" class="btn btn-primary btn-lg">Review API</a>
+        {% else %}
+        <p class="text-danger">You need to be logged in to add items to your cart or write a review.</p>
+        <a href="{% url 'login_user' %}" class="btn btn-warning btn-lg">Login</a>
+        <a href="{% url 'register_user' %}" class="btn btn-info btn-lg">Register</a>
+        {% endif %}
+        
+    </div>
+{% endblock %}

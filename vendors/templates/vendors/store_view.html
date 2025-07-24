@@ -1,0 +1,29 @@
+{% extends 'base_vendor.html' %}
+
+{% block title %}Store list {% endblock %}
+
+{% block content %}
+    <h2>Here are your stores</h2>
+
+    {% if stores %}
+        <ul class="product-list"> {# Re-using .product-list for general list styling #}
+            {% for store in stores %}
+                <li>
+                    <span>{{ store.name }}</span>
+                    <div class="actions">
+                        <a href="{% url 'vendors:store_update' pk=store.pk %}">Edit</a>
+                        <a href="{% url 'vendors:store_delete' pk=store.pk %}" style="color: red;">Delete</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You don't have any stores yet.</p>
+    {% endif %}
+
+    <p>
+    
+        <a href="{% url 'vendors:store_generate' %}" class="btn btn-sm btn-success mt-2" >Add Store</a>
+
+    </p>
+{% endblock %}

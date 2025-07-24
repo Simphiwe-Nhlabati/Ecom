@@ -1,0 +1,90 @@
+{% extends 'base_reviews.html' %}
+{% load static %}
+
+{% block title %}Review a product{% endblock %}
+
+{% block content %}
+
+<hr class="my-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <h3 class="mb-4">Customer Reviews ({{ product.total_reviews }})</h3>
+
+            {% if reviews %}
+                <div class="reviews-list mb-5">
+                    {% for review in reviews %}
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title mb-1">{{ review.user.username }}
+                                    <span class="float-end text-muted small">{{ review.created_at|date:"M d, Y" }}</span>
+                                </h5>
+                                <div class="text-warning mb-2">
+                                    {% for i in "12345" %}
+                                        {% if review.rating >= forloop.counter %}
+                                            <i class="bi bi-star-fill"></i>
+                                        {% else %}
+                                            <i class="bi bi-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <p class="card-text">{{ review.comment|default_if_none:"No comment provided." }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Review this product</p>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                {% comment %} {% if user.is_buyer %} {% endcomment %}
+                    {% if not user_has_reviewed %}
+                        <div class="card shadow-sm mt-4">
+                            <div class="card-header bg-info text-white">
+                                <h5>Write a Review</h5>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" action="{% url 'make_review' product_id=product.id %}">
+                                    {% csrf_token %}
+                                    <div class="mb-3">
+                                        {% comment %} <label for="{{ review_form.rating.id_for_label }}" class="form-label">{{ review_form.rating.label }}</label>
+                                        {{ review_form.rating }}
+                                        {% if review_form.rating.errors %}
+                                            <div class="invalid-feedback d-block">{{ review_form.rating.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="{{ review_form.comment.id_for_label }}" class="form-label">{{ review_form.comment.label }}</label>
+                                        {{ review_form.comment }}
+                                        {% if review_form.comment.errors %}
+                                            <div class="invalid-feedback d-block">{{ review_form.comment.errors }}</div>
+                                        {% endif %} {% endcomment %}
+                                        {{ form.as_p }}
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info mt-4" role="alert">
+                            You have already reviewed this product. Thank you!
+                        </div>
+                    {% endif %}
+                {% comment %} {% else %} {% endcomment %}
+                    <div class="alert alert-info mt-4" role="alert">
+                        Only buyers can submit reviews.
+                    </div>
+                {% comment %} {% endif %} {% endcomment %}
+            {% else %}
+                <div class="alert alert-info mt-4" role="alert">
+                    Please <a href="{% url 'login' %}?next={{ request.path }}">login</a> to leave a review.
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% comment %} {% endif %} {% endcomment %}
+
+</div>
+{% endblock %}

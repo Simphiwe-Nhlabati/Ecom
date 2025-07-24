@@ -1,58 +1,52 @@
-from rest_framework import permissions
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.contrib.auth.models import Group, Permission
+from django.apps import apps
 from .models import User_Profile
 
 
-class BuyerPem(permissions.BasePermission):
-    """
-    Custom permission to only allow buyers to access certain views.
-    """
-    def has_permission(self, request, view):
-        if not request.user or not request.user.is_authenticated:
-            return False
-        
-        profile, created = User_Profile.objects.get_or_create(
-            user=request.user,
-            defaults={
-                'email': request.user.email,
-                'first_name': request.user.first_name,
-                'last_name': request.user.last_name,
-                'user_type': 'buyer',
-            }
-        )
-        return profile.user_type == 'buyer'
-    
+@receiver(post_save, sender=User_Profile)
+def assign_user_to_group(sender, instance, created, **kwargs):
+    if not created:
+        return
 
-class VendorPem(permissions.BasePermission):
-    """
-    Custom permission to only allow vendors to access certain views.
-    """
+    user_type = instance.user_type.lower().capitalize()  
+    group, _ = Group.objects.get_or_create(name=user_type)
+    instance.groups.add(group)
 
-    # def has_permission(self, request, view):
-    #     if not request.user or not request.user.is_authenticated:
-    #         return False
+    if user_type == 'Buyer':
         
-    #     try:
-    #         profile, _ = User_Profile.objects.get_or_create(
-    #             user=request.user,
-    #             defaults={
-    #                 'email': request.user.email,
-    #                 'first_name': request.user.first_name,
-    #                 'last_name': request.user.last_name,
-    #                 'user_type': 'buyer',
-    #             }
-    #         )
-    #         return profile.user_type == 'vendor'
+        assign_permissions_to_group(group, ['view_product', 'store_view'])
+
+    elif user_type == 'Vendor':
         
-    #     except Exception as e:
-    #         print(["Error in VendorPem permission:", str(e)])
-    
-    def has_permission(self, request, view):
-        if not request.user or not request.user.is_authenticated:
-            return False
+        assign_permissions_to_group(group, [
+            'generate_product', 'modify_product', 'delete_product', 'view_product',
+            'store_generate', 'store_update', 'store_delete', 'store_view', 'sales_report'
+        ])
+
+
+def assign_permissions_to_group(group, codename_list):
+    """Assign a list of permission codenames to a group dynamically."""
+    models = {
+        'product': apps.get_model('vendor', 'Product'),
+        'store': apps.get_model('vendor', 'Store'),
+        # 'order': apps.get_model('vendor', 'Order'),
+    }
+
+    for codename in codename_list:
+        model_key = codename.split('_')[-1]
+        model_key = model_key.lower()
+        
+        if model_key not in models:
+            continue
 
         try:
-            profile = User_Profile.objects.get(user=request.user)
-            return profile.user_type == 'vendor'
-        except User_Profile.DoesNotExist:
-            return False
-            
+            permission = Permission.objects.get(
+                codename=codename,
+                content_type__app_label='vendor',
+                content_type__model=model_key
+            )
+            group.permissions.add(permission)
+        except Permission.DoesNotExist:
+            pass

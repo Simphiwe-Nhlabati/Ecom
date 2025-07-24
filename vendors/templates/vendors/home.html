@@ -5,6 +5,9 @@
 {% block title %}Welcome to Takealot clone{% endblock %}
 
 {% block content %}
+
+<p>Vendor? {{ user|vendor_pem }}</p>
+<p>Buyer? {{ user|buyer_pem }}</p>
 <body>
     <h1 class="head1">Here are the types of breads available</h1>
     <div class="container">
@@ -41,7 +44,7 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     
-                    {% if user.is_authenticated %}
+                    {% if user.is_authenticated and buyer_pem %}
                         <h2>Welcome back user</h2>
                         <p>Make a selection down below </p>
                         <div>
@@ -57,16 +60,12 @@
                     {% else %}
                         <h2>Signup/Login form</h2>
                         <p>Make a selection down below </p> 
-                        {% comment %} <li class="nav-item"> {% endcomment %}
                         <p>
                         <a class="nav-link" href="{% url 'login_user' %}"><button type="button" class="btn btn-primary">Login to your account</a></button>
                         </p>
-                        {% comment %} </li> 
-                        <li class="nav-item"> {% endcomment %}
                         <p>
                         <a class="nav-link" href="{% url 'register_user' %}"><button type="button" class="btn btn-primary">Register your account</a></button>
                         </p>
-                        {% comment %} </li> {% endcomment %}
                     {% endif %} 
                     </br>
                 </div>

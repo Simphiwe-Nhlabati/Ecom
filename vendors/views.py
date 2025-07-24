@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
+from django.core.exceptions import PermissionDenied
 from .models import Store, Product
 from .serializers import StoreSerializer, ProductSerializer
 from .form import EStoreForm, EProductForm
@@ -19,14 +20,21 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN
-from accounts.permissions import VendorPem, BuyerPem
 # Create your views here.
+
+
+def vendor_pem(user):
+    return user.groups.filter(name='Vendor').exists()
+
+
+def buyer_pem(user):
+    return user.groups.filter(name='Buyer').exists()
 
 
 class Store_View(LoginRequiredMixin, ListView):
     """View all stores for the vendor."""
     model = Store
-    permission_classes = [IsAuthenticated, VendorPem, BuyerPem]
+    permission_classes = [IsAuthenticated]
     serializer_class = StoreSerializer
     template_name = 'vendors/store_view.html'
     context_object_name = 'stores'
@@ -39,7 +47,7 @@ class Store_Generate(LoginRequiredMixin, CreateView):
     """Create a new store for the vendor."""
     model = Store
     form_class = EStoreForm
-    permission_classes = [IsAuthenticated, VendorPem]
+    permission_classes = [IsAuthenticated]
     serializer_class = StoreSerializer
     template_name = 'vendors/store_form.html'
     success_url = reverse_lazy('vendors:store_view')
@@ -60,7 +68,7 @@ class Store_Generate_API(CreateAPIView):
     """API endpoint to create a new store for the vendor."""
     form_class = EStoreForm
     queryset = Store.objects.all()
-    permission_classes = [IsAuthenticated, VendorPem]
+    permission_classes = [IsAuthenticated]
     serializer_class = StoreSerializer
     # template_name = 'vendors/store_form.html'
     success_url = reverse_lazy('vendors:store_view')
@@ -73,25 +81,37 @@ class Store_Update(LoginRequiredMixin, UpdateView):
     """Update an existing store for the vendor."""
     model = Store
     form_class = EStoreForm
-    permission_classes = [IsAuthenticated, VendorPem]
+    permission_classes = [IsAuthenticated]
     # fields = ['name', 'description']
     template_name = 'vendors/store_form.html'
-    success_url = reverse_lazy('vendors:store_view')
+    success_url = reverse_lazy('vendors:home_vendor')
 
     def get_queryset(self):
         return Store.objects.filter(vendor=self.request.user.user_profile)
+    
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if obj.vendor != self.request.user:
+            raise PermissionDenied("You do not own this store.")
+        return obj
 
 
 class Store_delete(LoginRequiredMixin, DeleteView):
     """Delete a store from the vendor's list."""
     model = Store
     # form_class = EStoreForm
-    permission_classes = [IsAuthenticated, VendorPem]
+    permission_classes = [IsAuthenticated]
     template_name = 'vendors/store_delete.html'
     success_url = reverse_lazy('vendors:store_view')
 
     def get_queryset(self):
         return Store.objects.filter(vendor=self.request.user.user_profile)
+    
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if obj.vendor != self.request.user:
+            raise PermissionDenied("You do not own this store.")
+        return obj
     
 
 @login_required
@@ -114,9 +134,6 @@ def view_product(request, store_id):
 
 
 @login_required
-# @api_view(['POST'])
-# @authentication_classes([BasicAuthentication])
-# @permission_classes([IsAuthenticated, VendorPem])
 def generate_product(request):
     if not Store.objects.filter(vendor__user=request.user).exists():
         messages.error(request, "You don't have any stores. Please create one first.")
@@ -136,7 +153,7 @@ def generate_product(request):
             product.store = selected_store
             product.save()
             messages.success(request, f"Product '{product.name}' added successfully.")
-            return redirect('vendors:view_product', store_id=selected_store.id)
+            return redirect('vendors:home_vendor', store_id=selected_store.id)
         else:
             messages.error(request, "Please select a valid store.")
     
@@ -214,7 +231,7 @@ def modify_product(request, pk):
             product_instance = form.save(commit=False) 
             product_instance.save()
             messages.success(request, f"Product '{product_instance.name}' has been modify.")
-            url = reverse_lazy('vendors:view_product', args=[product_instance.store.id])
+            url = reverse_lazy('vendors:home_vendor', args=[product_instance.store.id])
             return HttpResponseRedirect(url)
         else:
             messages.error(request, "The modification of the product was unsuccessful")
@@ -242,7 +259,7 @@ def delete_product(request, pk):
             store_id = product_to_delete.store.id
             product_to_delete.delete()
             messages.success(request, f"Product '{product_to_delete.name}' deleted successfully.")
-            url = reverse_lazy('vendors:view_product', args=[store_id])
+            url = reverse_lazy('vendors:home_vendor', args=[store_id])
             return HttpResponseRedirect(url)
         except Exception as e: 
             messages.error(request, f"An error occurred while deleting the product: {e}")

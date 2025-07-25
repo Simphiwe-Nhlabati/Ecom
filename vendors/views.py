@@ -135,13 +135,13 @@ def view_product(request, store_id):
 
 @login_required
 def generate_product(request):
+    """Generate a new product for the store."""
     if not Store.objects.filter(vendor__user=request.user).exists():
         messages.error(request, "You don't have any stores. Please create one first.")
         return redirect('vendors:store_generate')
 
     if request.method == 'POST':
         form = EProductForm(request.POST, user=request.user)
-        # serializer = ProductSerializer(data=request.data)
         if form.is_valid():
             product = form.save(commit=False)
             selected_store = form.cleaned_data.get('store')
@@ -158,29 +158,18 @@ def generate_product(request):
             messages.error(request, "Please select a valid store.")
     
     else:
-        form = EProductForm(user=request.user)  # ✅ Pass the user
-        # serializer = ProductSerializer()
+        form = EProductForm(user=request.user)
 
     return render(request, 'vendors/product_form.html', {
         'form': form
     })
-    # return render(request, 'vendors/product_form.html', {
-    #     'form': serializer 
-    # })
     
 
 @api_view(['POST'])
 @authentication_classes([BasicAuthentication])
 @permission_classes([IsAuthenticated])
 def generate_product_api(request):
-    # Ensure the vendor has a store
-    
-    # if not Store.objects.filter(vendor__user=request.user).exists():
-    #     return Response(
-    #         {"detail": "You don't have any stores. Please create one first."},
-    #         status=HTTP_403_FORBIDDEN
-    #     )
-    
+    """API endpoint to create a new product for the vendor."""
     try:
         store = Store.objects.get(vendor__user=request.user)
     except Store.DoesNotExist:
@@ -213,19 +202,10 @@ def modify_product(request, pk):
     
     user = request.user
 
-    # if not user.has_perm('modify_product'):
-    #     form = EProductForm(instance=product_to_modify) 
-    #     return render(request, 'vendors/product_form.html', {'form': form, 'store': store, 'error_message': "You don't have permission to change products."})
-
     if request.method == 'POST':
         form = EProductForm(request.POST, instance=product_to_modify)
         if 'store' in form.fields:
             del form.fields['store']
-            
-        # else:
-        #     form = EProductForm(instance=product_to_modify)
-        #     if 'store' in form.fields:
-        #         del form.fields['store']
         
         if form.is_valid():
             product_instance = form.save(commit=False) 
@@ -271,6 +251,7 @@ def delete_product(request, pk):
 
 @login_required
 def sales_report(request):
+    """Generate a sales report for the vendor."""
     try:
         user_profile = User_Profile.objects.get(user=request.user)  
     except User_Profile.DoesNotExist:
@@ -317,10 +298,7 @@ def sales_report(request):
 def api_handler(request):
     """Handle AI-related requests."""
     if request.method == 'POST':
-        # Process the AI request here
-        # For example, you can use OpenAI's API to generate a response
         pass
     else:
-        # Render a form or page for AI interaction
         return render(request, 'vendors/ai_handler.html')
     

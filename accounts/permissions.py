@@ -29,9 +29,8 @@ def assign_user_to_group(sender, instance, created, **kwargs):
 def assign_permissions_to_group(group, codename_list):
     """Assign a list of permission codenames to a group dynamically."""
     models = {
-        'product': apps.get_model('vendor', 'Product'),
-        'store': apps.get_model('vendor', 'Store'),
-        # 'order': apps.get_model('vendor', 'Order'),
+        'product': apps.get_model('vendors', 'Product'),
+        'store': apps.get_model('vendors', 'Store'),
     }
 
     for codename in codename_list:
@@ -44,7 +43,7 @@ def assign_permissions_to_group(group, codename_list):
         try:
             permission = Permission.objects.get(
                 codename=codename,
-                content_type__app_label='vendor',
+                content_type__app_label='vendors',
                 content_type__model=model_key
             )
             group.permissions.add(permission)

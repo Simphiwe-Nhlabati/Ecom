@@ -4,57 +4,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Vendor store and products{% endblock %}</title>
-    {% comment %} <link rel="stylesheet" href="{% 'takealot/style.css' %}"> {% endcomment %}
+    <title>{% block title %}Vendor Dashboard - TakeaLot Store{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" 
     rel="stylesheet" 
     integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" 
     crossorigin="anonymous">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'style.css' %}">
-    
-    
-
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Vendor Panel</h1>
-            <nav>
-                <ul>
-                    
+<body class="bg-light">
+    <!-- Enhanced Vendor Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-lg">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'vendors:home_vendor' %}">
+                <i class="bi bi-shop me-2"></i>Vendor Panel
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#vendorNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="vendorNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'vendors:home_vendor' %}">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                        <li>Greetings vendor {{ user.username }}</li>
-                        <li><a href="{% url 'logout_user' %}">Logout</a></li>
-                        <li><a href="{% url 'vendors:home_vendor' %}">Dashboard</a></li>
-                        <li><a href="{% url 'vendors:store_view' %}">Store</a></li>
-                        {% if store.id %}
-                            <a href="{% url 'vendors:view_product' store.id %}">View Product</a>
-                        {% else %}
-                            <span>No product available</span>
-                        {% endif %}
+                        <li class="nav-item dropdown">
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'logout_user' %}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                            </ul>
+                        </li>
                     {% else %}
-                        <li><a href="{% url 'login_user' %}">Login</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login_user' %}">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                            </a>
+                        </li>
                     {% endif %}
                 </ul>
-            </nav>
-            <hr>
-        </header>
+            </div>
+        </div>
+    </nav>
 
-        <main>
-            {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+    <!-- Main Content -->
+    <main class="container my-4">
+        <!-- Enhanced Messages -->
+        {% if messages %}
+            <div class="messages mb-4">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-            {% block content %}
-                {% endblock %}
-        </main>
+        {% block content %}
+        {% endblock %}
+    </main>
 
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

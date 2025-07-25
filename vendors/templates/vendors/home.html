@@ -2,78 +2,125 @@
 {% load static %}
 
 
-{% block title %}Welcome to Takealot clone{% endblock %}
+{% block title %}Premium Bread Collection - Takealot Clone{% endblock %}
 
 {% block content %}
-
-<p>Vendor? {{ user|vendor_pem }}</p>
-<p>Buyer? {{ user|buyer_pem }}</p>
-<body>
-    <h1 class="head1">Here are the types of breads available</h1>
-    <div class="container">
-        {% if dash_list.products %}
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            {% for product in dash_list.products %}
-            <div class="col">
-                <div class="card h-100 shadow-sm">
+<!-- Enhanced Hero Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="head1 fade-in">
+            <i class="bi bi-shop display-4 mb-3"></i>
+            <h1 class="display-5 fw-bold">Premium Bread Collection</h1>
+            <p class="lead mb-0">Freshly baked, delivered to your door</p>
+        </div>
+    </div>
+</div>
+<!-- Products Section -->
+{% if dash_list.products %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        {% for product in dash_list.products %}
+        <div class="col fade-in">
+            <div class="card product-card h-100">
+                <!-- Product Image -->
+                <div class="position-relative">
                     {% if product.image %}
-                        <img src="{{ product.image.url }}" class="card-img-top img-fluid" alt="{{ product.description }}">
+                        <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.description }}">
                     {% else %}
-                        <img src="{% static 'bread_store/bakery-simple-element_24908-54307.avif' %}" class="card-img-top img-fluid" alt="No image available">
+                        <img src="{% static 'bread_store/bakery-simple-element_24908-54307.avif' %}" class="card-img-top product-image" alt="No image available">
                     {% endif %}
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title text-capitalize fw-bold">{{ product.name }}</h5>
-                        <p class="card-text text-muted mb-2">R {{ product.price|floatformat:2 }}</p>
-                        <form action="{% url 'product_detail' product_id=product.id %}" method="post" class="mt-auto">
-                            {% csrf_token %}
-                            <input type="hidden" name="product_id" value="{{ product.id }}">
-                            <button type="submit" class="btn btn-info w-100">View Details</button>
-                        </form>
+                    
+                    
+                </div>
+                
+                <!-- Product Details -->
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-capitalize fw-bold mb-2">
+                        {{ product.name }}
+                    </h5>
+                    <p class="card-text text-muted small mb-3">
+                        {{ product.description}}
+                    </p>
+                    <div class="mb-3">
+                        <span class="price-tag">R{{ product.price }}</span>
+                    </div>
+                    
+                    {% if user.is_authenticated %}
+                    <div class="mt-auto">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'add_item_to_cart' product.id %}"><button class="btn btn-primary btn-custom">
+                                Add to Cart
+                            </button></a>
+                            <a href="{% url 'product_detail' product.id %}" class="btn btn-secondary btn-warning">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="mt-auto">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'login_user' %}" class="btn btn-primary btn-custom">
+                                Login 
+                            </a>
+                            <a href="{% url 'register_user' %}" class="btn btn-secondary btn-waring">
+                                Sign Up
+                            </a>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+{% else %}
+    <!-- Empty State -->
+    <div class="text-center py-5">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body py-5">
+                <i class="bi bi-box-seam display-1 text-muted mb-4"></i>
+                <h3 class="text-muted mb-3">No Products Available</h3>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card bg-gradient-primary text-white border-0">
+            <div class="card-body text-center py-5">
+                <h3 class="fw-bold mb-3">Account Actions</h3>
+                <p class="lead mb-4">Access your account or sign up to get started</p>
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-center gap-3">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'logout_user' %}" class="btn btn-light">
+                                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                                </a>
+                                <a href="{% url 'show_user_cart' %}" class="btn btn-warning">
+                                    <i class="bi bi-cart3 me-1"></i>
+                                    View Shopping Cart
+                                </a>
+                                <a href="{% url 'home_dash' %}" class="btn btn-secondary">
+                                    <i class="bi bi-bag me-1"></i>Dashboard
+                                </a>
+                            {% else %}
+                                <a href="{% url 'login_user' %}" class="btn btn-light">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                                </a>
+                                <a href="{% url 'register_user' %}" class="btn btn-secondary">
+                                    <i class="bi bi-person-plus me-1"></i>Sign Up
+                                </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-            {% endfor %}
         </div>
-        {% else %}
-        <p class="text-center">No products available.</p>
-        {% endif %}
-    </div>  
-    <hr>
-    <footer class="mt-5">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    
-                    {% if user.is_authenticated and buyer_pem %}
-                        <h2>Welcome back user</h2>
-                        <p>Make a selection down below </p>
-                        <div>
-                            <ul class="navbar-nav">
+    </div>
+</div>
 
-                                <li class="nav-item dropdown">
-                                    <a class="dropdown-item" href="{% url 'logout_user' %}"><button type="button" class="btn btn-warning">Logout</a></button>
-                                    <a class="nav-link" href="{% url 'show_user_cart' %}"><button type="button" class="btn btn-primary">View shopping cart</button></a>
-                                    <a class="nav-link" href="{% url 'home_dash' %}"><button type="button" class="btn btn-primary">View dashboard</button></a>
-                                </li>
-                            </ul>
-                        </div>
-                    {% else %}
-                        <h2>Signup/Login form</h2>
-                        <p>Make a selection down below </p> 
-                        <p>
-                        <a class="nav-link" href="{% url 'login_user' %}"><button type="button" class="btn btn-primary">Login to your account</a></button>
-                        </p>
-                        <p>
-                        <a class="nav-link" href="{% url 'register_user' %}"><button type="button" class="btn btn-primary">Register your account</a></button>
-                        </p>
-                    {% endif %} 
-                    </br>
-                </div>
-                <div class="col-md-auto ms-auto">
-                    <img src="{% static 'bread_store/bakery-simple-element_24908-54307.avif' %}" alt="Company Logo" style="height: 100px;">
-                </div>
-            </div>
-        </div>
-        {% endblock %}
-    </footer>
-</body>
+
+{% endblock %}

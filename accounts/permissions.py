@@ -12,7 +12,7 @@ def assign_user_to_group(sender, instance, created, **kwargs):
 
     user_type = instance.user_type.lower().capitalize()  
     group, _ = Group.objects.get_or_create(name=user_type)
-    instance.groups.add(group)
+    instance.user.groups.add(group)
 
     if user_type == 'Buyer':
         
@@ -34,18 +34,42 @@ def assign_permissions_to_group(group, codename_list):
     }
 
     for codename in codename_list:
-        model_key = codename.split('_')[-1]
+        model_key = codename.split('_')[-1]  
         model_key = model_key.lower()
-        
+
         if model_key not in models:
             continue
+
+        content_type = models[model_key]._meta.app_label
+        model_name = models[model_key]._meta.model_name
 
         try:
             permission = Permission.objects.get(
                 codename=codename,
-                content_type__app_label='vendors',
-                content_type__model=model_key
+                content_type__app_label=content_type,
+                content_type__model=model_name
             )
             group.permissions.add(permission)
         except Permission.DoesNotExist:
-            pass
+            print(f"Permission '{codename}' not found for model '{model_key}'")
+        
+        
+# from django.contrib.auth.models import Group
+# vendor_group = Group.objects.get(name='Vendor')
+# buyer_group = Group.objects.get(name='Buyer')
+
+# from django.contrib.auth.models import User
+# user = User.objects.get(username='rizz')
+# print(user.groups.all())
+
+
+
+# from django.contrib.auth.models import Group
+# vendor_group, _ = Group.objects.get_or_create(name='Vendor')
+# buyer_group, _ = Group.objects.get_or_create(name='Buyer')
+
+# from django.contrib.auth.models import User, Group
+# user = User.objects.get(username='rizz')
+# group = Group.objects.get(name='Vendor')
+# user.groups.add(vendor_group)
+# user.save()

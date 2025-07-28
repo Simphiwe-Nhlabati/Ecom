@@ -193,8 +193,16 @@ def generate_product_api(request):
 @login_required
 def modify_product(request, pk):
     """Modify an existing product in the store."""
+    if not vendor_pem(request.user):
+        raise PermissionDenied("Only vendors can modify products.")
+    
     product_to_modify = get_object_or_404(Product, pk=pk, store__vendor=request.user.user_profile)
+    
+    if product_to_modify.vendor != request.user:
+        raise PermissionDenied("You do not have permission to modify this product.")
+    
     store = None
+    
     try:
         store = Product.objects.first() 
     except Product.DoesNotExist:
@@ -228,8 +236,13 @@ def modify_product(request, pk):
 @login_required
 def delete_product(request, pk):
     """Delete a product from the store."""
+    if not request.user.is_authenticated or not vendor_pem(request.user):
+        raise PermissionDenied("Not authorized.")
+    
     product_to_delete = get_object_or_404(Product, pk=pk, store__vendor=request.user.user_profile)
-    # user = request.user
+    
+    if product_to_delete.vendor != request.user:
+        raise PermissionDenied("Not your product.")
 
     store_context = None 
 

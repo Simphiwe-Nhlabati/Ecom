@@ -42,12 +42,12 @@
                         {% if store.id %}
                             <a href="{% url 'view_product' store.id %}">View Product</a>
                         {% else %}
-                            <a href="{% url 'vendors:generate_product_api' %}">Generate API Product</a>
+                            <a href="{% url 'vendors:generate_product' %}">Generate Product</a>
                         {% endif %}
                     {% else %}
                         <p class="card-text">You haven't added any products yet.</p>
                     {% endif %}
-                    <a href="{% url 'vendors:store_generate_api' %}" class="btn btn-sm btn-success mt-2">Add New API Product</a>
+                    <a href="{% url 'vendors:store_generate' %}" class="btn btn-sm btn-success mt-2">Add New Product</a>
                 </div>
             </div>
         </div>
@@ -78,8 +78,10 @@
 
     <div class="text-center mt-5">
         <h3>Checkout your stores</h3>
-        <a href="{% url 'vendors:store_generate_api' %}" class="btn btn-lg btn-primary mx-2">View your API store</a>
-        {% comment %} <a href="{% url 'eCommerce:view_products' %}" class="btn btn-lg btn-success mx-2">Manage Products</a> {% endcomment %}
+        <a href="{% url 'vendors:store_generate' %}" class="btn btn-lg btn-primary mx-2">View your API store</a>
     </div>
 </div>
+<footer>
+    <a href="{% url 'home_dash' %}" class="btn btn-lg btn-primary mx-2">Go to homepage</a>
+</footer>
 {% endblock %}

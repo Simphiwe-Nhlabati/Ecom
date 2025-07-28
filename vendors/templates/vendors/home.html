@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load permissions %}
 
 
 {% block title %}Premium Bread Collection - Takealot Clone{% endblock %}
@@ -95,7 +96,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-6">
                         <div class="d-flex justify-content-center gap-3">
-                            {% if user.is_authenticated %}
+                            {% if user.is_authenticated and user|buyer_pem %}
                                 <a href="{% url 'logout_user' %}" class="btn btn-light">
                                     <i class="bi bi-box-arrow-right me-1"></i>Logout
                                 </a>
@@ -104,6 +105,13 @@
                                     View Shopping Cart
                                 </a>
                                 <a href="{% url 'home_dash' %}" class="btn btn-secondary">
+                                    <i class="bi bi-bag me-1"></i>Dashboard
+                                </a>
+                            {% elif user.is_authenticated and user|vendor_pem %}
+                                <a href="{% url 'logout_user' %}" class="btn btn-light">
+                                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                                </a>
+                                <a href="{% url 'vendors:home_vendor' %}" class="btn btn-secondary">
                                     <i class="bi bi-bag me-1"></i>Dashboard
                                 </a>
                             {% else %}

@@ -1,9 +1,20 @@
 {% extends 'base_cart.html' %}
 {% load static %}
+{% load permissions %}
 
 {% block title %}Product information{% endblock %}
 
 {% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
 <h1>Product information</h1>
     <div class="product-detail">
         <h1>{{ product.name }}</h1>
@@ -32,15 +43,21 @@
         <p>No reviews yet.</p>
         {% endif %}
 
-        {% if user.is_authenticated %}
-        <a href="{% url 'add_item_to_cart' product_id=product.id %}" class="btn btn-success btn-lg">Add item to cart</a>
+        {% if user.is_authenticated and user|buyer_pem %}
+            <a href="{% url 'add_item_to_cart' product_id=product.id %}" class="btn btn-success btn-lg">Add item to cart</a>
 
-        <a href="{% url 'make_review' product_id=product.id %}" class="btn btn-primary btn-lg">Write a Review</a>
-        <a href="{% url 'display_reviews_api' %}" class="btn btn-primary btn-lg">Review API</a>
+            <a href="{% url 'make_review' product_id=product.id %}" class="btn btn-primary btn-lg">Write a Review</a>
+            {% comment %} <a href="{% url 'display_reviews_api' %}" class="btn btn-primary btn-lg">Review API</a> {% endcomment %}
+        
+        {% elif user.is_authenticated and user|vendor_pem %}
+            <a href="{% url 'vendors:modify_product' pk=product.pk %}" class="btn btn-primary btn-lg">Edit product</a>
+            <a href="{% url 'vendors:delete_product' pk=product.pk %}" class="btn btn-primary btn-lg">Remove product</a>
+            <a href="{% url 'vendors:home_vendor' %}" class="btn btn-primary btn-lg">Dashboard</a>
+        
         {% else %}
-        <p class="text-danger">You need to be logged in to add items to your cart or write a review.</p>
-        <a href="{% url 'login_user' %}" class="btn btn-warning btn-lg">Login</a>
-        <a href="{% url 'register_user' %}" class="btn btn-info btn-lg">Register</a>
+            <p class="text-danger">You need to be logged in to add items to your cart or write a review.</p>
+            <a href="{% url 'login_user' %}" class="btn btn-warning btn-lg">Login</a>
+            <a href="{% url 'register_user' %}" class="btn btn-info btn-lg">Register</a>
         {% endif %}
         
     </div>

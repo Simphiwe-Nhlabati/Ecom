@@ -52,24 +52,3 @@ def assign_permissions_to_group(group, codename_list):
             group.permissions.add(permission)
         except Permission.DoesNotExist:
             print(f"Permission '{codename}' not found for model '{model_key}'")
-        
-        
-# from django.contrib.auth.models import Group
-# vendor_group = Group.objects.get(name='Vendor')
-# buyer_group = Group.objects.get(name='Buyer')
-
-# from django.contrib.auth.models import User
-# user = User.objects.get(username='rizz')
-# print(user.groups.all())
-
-
-
-# from django.contrib.auth.models import Group
-# vendor_group, _ = Group.objects.get_or_create(name='Vendor')
-# buyer_group, _ = Group.objects.get_or_create(name='Buyer')
-
-# from django.contrib.auth.models import User, Group
-# user = User.objects.get(username='rizz')
-# group = Group.objects.get(name='Vendor')
-# user.groups.add(vendor_group)
-# user.save()

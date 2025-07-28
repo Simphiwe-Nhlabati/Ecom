@@ -15,25 +15,42 @@
 
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Buyer Panel</h1>
-            <nav>
-                <ul>
-                    {% if store.id %}
-                        <a href="{% url 'view_product' store.id %}">View Product</a>
-                    {% else %}
-                        <span>No products</span>
-                    {% endif %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-lg">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'home_dash' %}">
+                <i class="bi bi-shop me-2"></i>Buyer Panel
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#vendorNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="vendorNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home_dash' %}">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
                     {% if user.is_authenticated %}
-                        <li>Greetings Buyer <a href="{% url 'logout_user' %}">Logout</a></li>
+                        <li class="nav-item dropdown">
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'logout_user' %}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                            </ul>
+                        </li>
                     {% else %}
-                        <li><a href="{% url 'login_user' %}">Login</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login_user' %}">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                            </a>
+                        </li>
                     {% endif %}
                 </ul>
-            </nav>
-            <hr>
-        </header>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        
 
         <main>
             {% if messages %}

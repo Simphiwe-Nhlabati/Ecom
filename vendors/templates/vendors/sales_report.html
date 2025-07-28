@@ -27,7 +27,8 @@
         <tr>
             <th>Product</th>
             <th>Units Sold</th>
-            <th>Total Revenue</th>
+            <th>Price</th>
+            <th>Total Amount</th>
         </tr>
     </thead>
     <tbody>
@@ -35,9 +36,13 @@
         <tr>
             <td>{{ item.product__name }}</td>
             <td>{{ item.total_quantity }}</td>
-            <td>R {{ item.total_revenue }}</td>
+            <td>{{ item.product__price }}</td>
+            <td>R {{ item.total_amount }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+<div class="d-flex justify-content-center">
+    <h3><b>Total revenue:</b> R{{ total_revenue }}</h3>
+</div>
 {% endblock %}

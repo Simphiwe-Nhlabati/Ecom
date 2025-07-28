@@ -15,9 +15,8 @@
     {% endfor %}
 {% endif %}
 
-<h1>Product information</h1>
+<h1>{{ product.name }}</h1>
     <div class="product-detail">
-        <h1>{{ product.name }}</h1>
         {% if product.image %}
             <img src="{{ product.image.url }}" class="card-img-top img-fluid" alt="{{ product.description }}">
         {% else %}
@@ -40,19 +39,18 @@
             {% endfor %}
         </ul>
         {% else %}
-        <p>No reviews yet.</p>
+            <p>No reviews yet.</p>
         {% endif %}
 
         {% if user.is_authenticated and user|buyer_pem %}
             <a href="{% url 'add_item_to_cart' product_id=product.id %}" class="btn btn-success btn-lg">Add item to cart</a>
 
             <a href="{% url 'make_review' product_id=product.id %}" class="btn btn-primary btn-lg">Write a Review</a>
-            {% comment %} <a href="{% url 'display_reviews_api' %}" class="btn btn-primary btn-lg">Review API</a> {% endcomment %}
         
         {% elif user.is_authenticated and user|vendor_pem %}
             <a href="{% url 'vendors:modify_product' pk=product.pk %}" class="btn btn-primary btn-lg">Edit product</a>
-            <a href="{% url 'vendors:delete_product' pk=product.pk %}" class="btn btn-primary btn-lg">Remove product</a>
-            <a href="{% url 'vendors:home_vendor' %}" class="btn btn-primary btn-lg">Dashboard</a>
+            <a href="{% url 'vendors:delete_product' pk=product.pk %}" class="btn btn-danger btn-lg">Remove product</a>
+            <a href="{% url 'vendors:home_vendor' %}" class="btn btn-success btn-lg">Dashboard</a>
         
         {% else %}
             <p class="text-danger">You need to be logged in to add items to your cart or write a review.</p>

@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container my-4">
-    <h1 class="mb-4">Welcome Buyer</h1>
+    <h1 class="mb-4">Welcome {{ user.username }}</h1>
 
     {% if messages %}
         <div class="messages mb-3">
@@ -29,8 +29,8 @@
                         <ul class="list-group list-group-flush">
                             {% for order in recent_orders %}
                                 <li class="list-group-item">
-                                    Order: {{ cart.created_at}}<br>  
-                                    Total: R{{ cart.final_price }}<br>
+                                    Order: {{ order.created_at}}<br>  
+                                    Total: R{{ order.final_price }}<br>
                                 </li>
                             {% endfor %}
                         </ul>

@@ -6,7 +6,17 @@
 {% block title %}Premium Bread Collection - Takealot Clone{% endblock %}
 
 {% block content %}
-<!-- Enhanced Hero Section -->
+{% if messages %}
+    <div class="messages mb-3">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="row mb-5">
     <div class="col-12">
         <div class="head1 fade-in">
@@ -45,17 +55,21 @@
                         <span class="price-tag">R{{ product.price }}</span>
                     </div>
                     
-                    {% if user.is_authenticated %}
+                    {% if user.is_authenticated and user|buyer_pem %}
                     <div class="mt-auto">
                         <div class="d-grid gap-2">
-                            <a href="{% url 'add_item_to_cart' product.id %}"><button class="btn btn-primary btn-custom">
+                            <a href="{% url 'add_item_to_cart' product.id %}" class="btn btn-primary btn-custom">
                                 Add to Cart
-                            </button></a>
+                            </a>
                             <a href="{% url 'product_detail' product.id %}" class="btn btn-secondary btn-warning">
                                 View Details
                             </a>
                         </div>
                     </div>
+                    {% elif user.is_authenticated and user|vendor_pem %}
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-secondary btn-warning">
+                            View Details
+                        </a>
                     {% else %}
                     <div class="mt-auto">
                         <div class="d-grid gap-2">
@@ -65,8 +79,9 @@
                             <a href="{% url 'register_user' %}" class="btn btn-secondary btn-waring">
                                 Sign Up
                             </a>
-                            </div>
                         </div>
+                    </div>
+                        
                     {% endif %}
 
                 </div>

@@ -36,11 +36,16 @@ class Store_View(LoginRequiredMixin, ListView):
     model = Store
     permission_classes = [IsAuthenticated]
     serializer_class = StoreSerializer
-    template_name = 'vendors/store_view.html'
+    template_name = 'vendors/home_dashboard.html'
     context_object_name = 'stores'
 
     def obtain_store(self):
         return self.request.user.stores.all()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['stores'] = Store.objects.filter(vendor=self.request.user.user_profile)
+        return context
     
 
 class Store_Generate(LoginRequiredMixin, CreateView):
@@ -71,7 +76,7 @@ class Store_Generate_API(CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = StoreSerializer
     # template_name = 'vendors/store_form.html'
-    success_url = reverse_lazy('vendors:store_view')
+    success_url = reverse_lazy('vendors:home_vendor')
     
     def perform_create(self, serializer):
         serializer.save(vendor=self.request.user.user_profile)
@@ -291,20 +296,24 @@ def sales_report(request):
 
     report = (
         orders
-        .values('product__id', 'product__name')
+        .values('product__id', 'product__name', 'product__price')
         .annotate(
             total_quantity=Sum('quantity'),
-            total_revenue=Sum(F('price') * F('quantity'))
+            total_price=Sum('price'),
+            total_amount=Sum(F('price') * F('quantity'))
         )
-        .order_by('total_revenue')
+        .order_by('total_amount')
     )
+    
+    total_revenue = sum(item['total_amount'] for item in report if item['total_amount'])
 
     stores = Store.objects.filter(vendor=user_profile)
 
     return render(request, 'vendors/sales_report.html', {
         'report': report,
         'stores': stores,
-        'selected_store': int(store_id) if store_id else None
+        'selected_store': int(store_id) if store_id else None,
+        'total_revenue': total_revenue,
     })
     
 

@@ -18,7 +18,7 @@ class EStoreForm(forms.ModelForm):
         self.fields['description'].widget.attrs['class'] = 'form-control'
         self.fields['description'].widget.attrs['placeholder'] = 'Enter the description of the store'
         self.fields['description'].label = 'Description'
-        self.fields['description'].help_text = '<span class="form-text text-muted"><small>Optional. 255 characters or fewer.</small></span>'       
+        self.fields['description'].help_text = '<span class="form-text text-muted"><small>Required. 255 characters or fewer.</small></span>'       
         
 
 class EProductForm(forms.ModelForm):

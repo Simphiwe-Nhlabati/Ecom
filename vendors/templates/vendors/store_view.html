@@ -6,7 +6,7 @@
     <h2>Here are your stores</h2>
 
     {% if stores %}
-        <ul class="product-list"> {# Re-using .product-list for general list styling #}
+        <ul class="product-list"> 
             {% for store in stores %}
                 <li>
                     <span>{{ store.name }}</span>

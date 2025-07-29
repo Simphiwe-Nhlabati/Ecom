@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import environ
 # import MySQLdb
 
 
@@ -83,15 +84,17 @@ WSGI_APPLICATION = 'takealot.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'takealot',
-        'USER': 'root',
-        'PASSWORD': 'simphiwe@7',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'NAME': env('takealot'),
+        'USER': env('root'),
+        'PASSWORD': env('nothing'),
+        'HOST': env('127.0.0.1'),
+        'PORT': env('3306'),
     }
 }
 

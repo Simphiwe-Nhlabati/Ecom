@@ -19,13 +19,13 @@ import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-+^+vl09!jr%#p&4si9_t9p5hupog(6_rqu=x&_#xblht8^0*j+'
-
+SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -84,17 +84,15 @@ WSGI_APPLICATION = 'takealot.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-env = environ.Env()
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': env('takealot'),
-        'USER': env('root'),
-        'PASSWORD': env('nothing'),
-        'HOST': env('127.0.0.1'),
-        'PORT': env('3306'),
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     }
 }
 
@@ -134,6 +132,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -155,11 +154,7 @@ LOGIN_URL = '/accounts/login_user/'
 
 AUTH_USER_MODEL = 'auth.User'
 
-# client id = ZjdlbU9SdW03M3ZVZmhUSlIydnE6MTpjaQ
-# client sercet = LuW1AV7kZSLczM9DY4Ekas3zSu8ehysznkAgmrTkbPVGApIOe6
-
-TWITTER_API_KEY = 'zn0fqajlrcP0nYwb5Kgpb0cK0'
-TWITTER_API_SECRET = 'TY5mLkHrFaQ2QTXuQIQMYJOEdUVRvI8drDqLAI7kmuqbWKvwGG'
-
-TWITTER_ACCESS_TOKEN = '1939661071159287808-ssjcKwdugPfm59T3AjFcbvRuCNuCKF'
-TWITTER_ACCESS_SECRET = 'xOGP0xDI804AEYsVfhcpnQK01q9q0jPr5s3gdwEcA4Uoe'
+TWITTER_API_KEY = env('TWITTER_API_KEY')
+TWITTER_API_SECRET = env('TWITTER_API_SECRET')
+TWITTER_ACCESS_TOKEN = env('TWITTER_ACCESS_TOKEN')
+TWITTER_ACCESS_SECRET = env('TWITTER_ACCESS_SECRET')
